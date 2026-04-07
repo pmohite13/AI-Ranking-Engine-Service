@@ -1,0 +1,43 @@
+I am designing an AI-native service named "AI-Ranking-Engine-Service" for a talent intelligence system that ranks candidates against job roles. The goal is to move beyond traditional keyword matching and build a scalable, high-quality matching engine. I had very detail level of discussion with ChatGPT. I have captured the entire discussion with ChatGPT in conversation.txt document. I want you to very thoroughly read, study, and analyse each and every detail from minute to whole mentioned in conversation.txt and get the context out of it. 
+
+You will find in the conversation.txt file with the suggestions and feedbacks. I just dont want to be a mediocre software professional who simply consume and integrate the technologies to build some system, I also want to be a real producer and problem solver type of techie. We want to create a better highly scalable, robust, standard, modular, secure and performant architecture and system.
+
+It is highly possible that all the suggestions or feedback is not covering everything or missed some part, so feel free to include that as well.
+
+We dont want naive solution. Follow best practices and standards of software development and AI software development.
+
+We also want to keep provision for creating "Architecture Decision Records - ADR" so that we know why certain architectural decision is taken.
+
+I have consolidated few inputs from the conversation.txt file below for your quick reference as they are very important to be included and you dont miss them.
+
+See we dont want any workaround or patch-work. We need to have a standard, permanent, scalable, robust, modular approach. 
+
+We want to have highest performance possible and lowest unnecessary usage of memory or bloating memory. We want to follow all best practices possible to keep our project highly performant, secure, light and robust. 
+
+If needed then please also check what or how other people across the industry around the globe is doing in this type of scenario or tasks or project.
+
+If needed please refer to and align with official documentation and latest best and standard practices.
+
+Create unit tests and make sure everything is working properly.
+
+If you want anytime to do research online, please feel free to do it.
+
+Dont overcrowd any single file, use separate files if the count of lines of code is more than 500. This helps us to manage the code and give us clarity and stop creating mamoth lines of code in single file, bloating the file.
+
+We dont need any naive solution. We dont want to duplicate any code, we want to leverage as much as we can the current code infrastructure. We want to make sure we always use highly scalable, robust, modular, performant, secure approach and solution.
+
+So I want that you create single (not multiple) .md file format document and mention in it in-detail, step by step implementation plan.
+
+My consolidated few inputs below:
+###
+
+1. We want to use .net
+2. We want to use .net environment supportive  PDF and DOCX parsers
+3. we want to use OpenAI and batch embedding.
+4. Yes use In-memory FAISS with fallback to cosine similarity
+5. Use Caching to cache hashed results for performance
+
+We want to use relevant Design Pattern, SOLID Principles of Software Development Life Cycle. 
+We want to use Fluent Validation 
+We want to leverage DI, proper standard exception handling and retry mechanism
+###

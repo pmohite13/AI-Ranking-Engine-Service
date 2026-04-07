@@ -1,0 +1,8 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\AI.Ranking.Engine.Application\AI.Ranking.Engine.Application.csproj" />
+    <ProjectReference Include="..\AI.Ranking.Engine.Domain\AI.Ranking.Engine.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

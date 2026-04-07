@@ -1,0 +1,53 @@
+I have legacy recruitment system with problematic talent intelligence & ranking service. So I want to design new AI-native service for this system that ranks candidates against the available job roles more efficiently and smartly in AI-native way. The goal is to move beyond traditional keyword matching and build a scalable, high-quality matching service.
+Objectives
+•	Design a robust, scalable, and modular service
+•	Ensure high performance and low memory overhead
+•	Follow industry best practices for system design, concurrency, and AI integration
+•	Avoid any workaround-based or naive implementations
+•	Ensure the solution is production-grade, maintainable, and extensible
+Context
+•	Approx. 50000 candidate profiles
+•	Approx. 1500 active job roles at any given time
+•	Goal: Generate a ranked Top 10 candidates per job role
+Functional Expectations
+The service should:
+1.	Ingest and parse documents
+o	Support multiple formats (PDF, DOCX, etc.)
+o	Handle unstructured and semi-structured data reliably
+2.	Build an end-to-end pipeline
+o	Document ingestion → parsing → feature extraction → scoring → ranking output
+3.	Produce high-quality candidate ranking
+o	Move beyond keyword matching
+o	Leverage AI techniques (e.g., embeddings, LLMs) combined with deterministic logic
+4.	Handle high-concurrency ingestion
+o	Ensure no data loss
+o	Avoid bottlenecks under load
+5.	Ensure strong cold-start performance
+o	Provide accurate results even for new job roles with no historical data
+________________________________________
+Design Expectations
+•	Use a clean, modular architecture with clear separation of concerns
+•	Avoid code duplication and ensure reusability
+•	Keep files manageable (avoid overly large files; split logically where needed)
+•	Incorporate unit testing to validate core logic
+•	Optimize for performance, scalability, and reliability
+________________________________________
+Additional Considerations
+•	If applicable, align with industry-standard approaches used in large-scale matching or recommendation systems
+•	Clearly define:
+o	Data flow across the pipeline
+o	Scaling strategy
+o	Trade-offs and assumptions
+o	Known failure modes (e.g., parsing limitations, ambiguity in skill extraction, etc.)
+________________________________________
+Request
+Based on the above, provide:
+1.	A step-by-step implementation plan
+2.	Guidance on building a production-grade ranking engine
+3.	An approach for integrating LLM-based structured understanding (for resumes and job descriptions) in a controlled and efficient way
+4.	Best practices for ensuring the system is:
+o	Deterministic where required
+o	Explainable
+o	Performant under scale
+The focus should be on delivering a thin but fully working slice of the system that demonstrates core capabilities and architectural soundness.
+

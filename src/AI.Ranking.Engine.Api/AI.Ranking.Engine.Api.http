@@ -1,0 +1,6 @@
+@AI.Ranking.Engine.Api_HostAddress = http://localhost:5019
+
+GET {{AI.Ranking.Engine.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

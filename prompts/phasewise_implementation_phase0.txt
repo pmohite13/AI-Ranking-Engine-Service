@@ -1,0 +1,21 @@
+I want you to please thoroughly read, study and analyse docs/IMPLEMENTATION-PLAN.md, docs/Known-Architectural-Decisions.md, docs/raw_requirement.txt so that you will get overall understanding about the project structure, requirement, dependencies and data/process flow.
+
+Okay as mentioned in "docs/IMPLEMENTATION-PLAN.md" document lets start implementation for "Phase 0 — Repository and governance (0.5–1 day)". Lets begin with modules/features/tasks/steps/goals/phases "1.", "2.", "3.", "4.", and all their respective sub-tasks as they are inter-related. 
+
+Read, study and analyse "docs/IMPLEMENTATION-PLAN.md" document to get better context.
+
+See we dont want any workaround or patch-work. We need to have a standard, permanent, scalable, robust, modular approach. 
+
+We want to have highest performance possible and lowest unnecessary usage of memory or bloating memory. We want to follow all best practices possible to keep our app highly performant, secure, light and robust. 
+
+If needed then please also check what or how other people across the industry around the globe is doing in this type of scenario.
+
+If needed check if it is aligned with official documentation and latest best and standard practices.
+
+Create tests and make sure everything is working properly as per the updates. Dont run test, I will run manually later.
+
+If you want anytime to do research online, please feel free to do it.
+
+Dont overcrowd any single file, use separate files if the count of lines of code is more than 500. This helps us to manage the code and give us clarity and stop creating mamoth lines of code in single file, bloating the file.
+
+We dont need any naive solution. Our project is big and we dont want to duplicate any code, we want to leverage as much as we can the current code infrastructure. We want to make sure we always use highly scalable, robust, modular, performant, secure approach and solution.
