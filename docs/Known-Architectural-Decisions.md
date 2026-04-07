@@ -112,12 +112,18 @@ It is **not** a backlog of defects; it is a **reference** so future contributors
 
 ## 11. Related documents
 
+- `docs/DESIGN.md` — system design, data flow, scaling, **known failure modes**, ADR index.
 - `docs/IMPLEMENTATION-PLAN.md` — step-by-step implementation aligned with these choices.
-- `docs/adr/` — formal Architecture Decision Records (ADR) when a decision is made to upgrade or replace an item above.
+- `docs/adr/` — formal Architecture Decision Records (ADRs) when a decision is made to upgrade or replace an item above.
   - `docs/adr/0001-record-architecture-decisions.md` — ADR process and template.
   - `docs/adr/0002-hybrid-ranking-baseline.md` — hybrid (semantic + deterministic) ranking vs embeddings-only.
+  - `docs/adr/0003-openai-embeddings-sync-in-process-batching.md` — synchronous in-process embedding batching (no OpenAI Batch API).
   - `docs/adr/0004-pure-dotnet-vector-recall.md` — in-memory managed Top-K recall vs native ANN (FAISS) later.
+  - `docs/adr/0005-hash-keyed-memory-caching.md` — `IMemoryCache` via `ICacheService`, hash keys, ingestion dedupe.
+  - `docs/adr/0006-llm-structured-extraction-with-heuristic-fallback.md` — LLM JSON + heuristic merge and validation.
+  - `docs/adr/0007-fluentvalidation-for-api-commands.md` — FluentValidation for ingest/rank commands.
+  - `docs/adr/0008-offline-ranking-evaluation-deferred.md` — offline NDCG-style metrics deferred until golden sets exist.
 
 ---
 
-*Last updated: aligned with intentional simplifications in the implementation plan (thin-slice, workable, minimal third-party stack).*
+*Last updated: Phase 8 — DESIGN.md and ADRs 0005–0008; aligned with intentional simplifications in the implementation plan (thin-slice, workable, minimal third-party stack).*

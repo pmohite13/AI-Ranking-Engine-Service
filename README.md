@@ -17,7 +17,19 @@ dotnet build -c Release
 dotnet test -c Release --no-build
 ```
 
+**Unit tests only** (faster; no ASP.NET Core host or integration scenarios):
+
+```bash
+dotnet test tests/AI.Ranking.Engine.UnitTests -c Release
+```
+
 **Note:** `dotnet build` runs restore automatically when needed. Using `dotnet build --no-restore` only works after a successful restore has produced `obj/project.assets.json` for each project. If you see **NETSDK1004** (“Assets file … not found”), run `dotnet restore` first, or omit `--no-restore`.
+
+### Quality verification (Phase 8)
+
+- Run the full test command above after changes; integration tests may require configuration (e.g., OpenAI-related scenarios)—use the **unit test** filter when isolating deterministic logic.
+- **Flakiness:** if a test fails intermittently, check for **parallel** access to shared static state, **timing** assumptions, or **external** API dependencies; prefer **mocks** for OpenAI in unit tests.
+- **CI-style sweep:** `dotnet test -c Release` from the repo root is the standard gate; add `--logger "trx;LogFileName=test-results.trx"` if your pipeline needs machine-readable output.
 
 ## Run the API (Phase 0)
 
@@ -66,6 +78,7 @@ Shared MSBuild settings: `Directory.Build.props`. Editor/analyzer baseline: `.ed
 
 ## Documentation
 
+- `docs/DESIGN.md` — system design, data flow, scaling, known failure modes
 - `docs/IMPLEMENTATION-PLAN.md` — phased implementation plan
 - `docs/Known-Architectural-Decisions.md` — intentional trade-offs for scale-up
 - `docs/adr/` — ADRs (see `0001-record-architecture-decisions.md` for the process)
