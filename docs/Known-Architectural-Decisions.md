@@ -116,6 +116,7 @@ It is **not** a backlog of defects; it is a **reference** so future contributors
 - `docs/adr/` — formal Architecture Decision Records (ADR) when a decision is made to upgrade or replace an item above.
   - `docs/adr/0001-record-architecture-decisions.md` — ADR process and template.
   - `docs/adr/0002-hybrid-ranking-baseline.md` — hybrid (semantic + deterministic) ranking vs embeddings-only.
+  - `docs/adr/0004-pure-dotnet-vector-recall.md` — in-memory managed Top-K recall vs native ANN (FAISS) later.
 
 ---
 

@@ -4,6 +4,7 @@ using AI.Ranking.Engine.Infrastructure.Caching;
 using AI.Ranking.Engine.Infrastructure.Embeddings;
 using AI.Ranking.Engine.Infrastructure.Http;
 using AI.Ranking.Engine.Infrastructure.Parsing;
+using AI.Ranking.Engine.Infrastructure.VectorRecall;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -13,7 +14,7 @@ namespace AI.Ranking.Engine.Infrastructure.DependencyInjection;
 public static class InfrastructureServiceCollectionExtensions
 {
     /// <summary>
-    /// Registers document parsers, embeddings (OpenAI + cache decorator), memory cache, and HTTP resilience.
+    /// Registers document parsers, embeddings (OpenAI + cache decorator), memory cache, in-memory vector recall, and HTTP resilience.
     /// </summary>
     public static IServiceCollection AddRankingEngineInfrastructure(
         this IServiceCollection services,
@@ -39,6 +40,8 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddSingleton<DocxDocumentParser>();
         services.AddSingleton<PlainTextDocumentParser>();
         services.AddSingleton<IDocumentParserFactory, DocumentParserFactory>();
+
+        services.AddSingleton<IVectorRecall, InMemoryVectorRecall>();
 
         return services;
     }
