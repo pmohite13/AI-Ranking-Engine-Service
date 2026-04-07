@@ -10,6 +10,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Align with Application/Infrastructure + OpenAI SDK (10.x); avoids CS1705 vs AspNetCore.App ref assemblies (8.x). -->
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.12" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
