@@ -6,6 +6,9 @@ using AI.Ranking.Engine.Domain;
 using AI.Ranking.Engine.Infrastructure.DependencyInjection;
 using Microsoft.Extensions.Options;
 
+// Local .env (e.g. repo root); TraversePath finds parent dirs when cwd is src/...; NoClobber keeps existing env vars.
+DotNetEnv.Env.NoClobber().TraversePath().Load();
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<IngestOptions>(builder.Configuration.GetSection(IngestOptions.SectionName));

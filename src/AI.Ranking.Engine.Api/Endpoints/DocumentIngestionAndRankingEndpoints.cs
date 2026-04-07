@@ -24,6 +24,7 @@ public static class DocumentIngestionAndRankingEndpoints
                 IngestDocumentAsync)
             .WithName("IngestDocument")
             .WithTags("Documents")
+            .DisableAntiforgery()
             .Accepts<DocumentIngestForm>("multipart/form-data")
             .Produces<IngestDocumentResponse>(StatusCodes.Status200OK)
             .ProducesValidationProblem(StatusCodes.Status400BadRequest)
