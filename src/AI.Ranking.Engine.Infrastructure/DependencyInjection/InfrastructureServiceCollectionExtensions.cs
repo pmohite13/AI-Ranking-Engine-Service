@@ -2,6 +2,7 @@ using AI.Ranking.Engine.Application.Abstractions;
 using AI.Ranking.Engine.Application.Options;
 using AI.Ranking.Engine.Infrastructure.Caching;
 using AI.Ranking.Engine.Infrastructure.Embeddings;
+using AI.Ranking.Engine.Infrastructure.Extraction;
 using AI.Ranking.Engine.Infrastructure.Http;
 using AI.Ranking.Engine.Infrastructure.Parsing;
 using AI.Ranking.Engine.Infrastructure.VectorRecall;
@@ -24,12 +25,17 @@ public static class InfrastructureServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(configuration);
 
         services.Configure<EmbeddingOptions>(configuration.GetSection(EmbeddingOptions.SectionName));
+        services.Configure<LlmExtractionOptions>(configuration.GetSection(LlmExtractionOptions.SectionName));
 
         services.AddMemoryCache();
         services.AddSingleton<ICacheService, MemoryCacheService>();
 
         services.AddOpenAiEmbeddingHttpClient();
+        services.AddOpenAiStructuredExtractionHttpClient();
         services.AddSingleton<OpenAIEmbeddingClient>();
+        services.AddSingleton<IStructuredLlmClient, OpenAiStructuredLlmClient>();
+        services.AddSingleton<HeuristicStructuredFeatureExtractor>();
+        services.AddSingleton<ILLMStructuredExtractor, OpenAiStructuredExtractor>();
         services.AddSingleton<IEmbeddingClient>(static sp =>
             new CachingEmbeddingClient(
                 sp.GetRequiredService<OpenAIEmbeddingClient>(),

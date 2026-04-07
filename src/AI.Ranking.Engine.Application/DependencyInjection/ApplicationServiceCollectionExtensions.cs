@@ -17,6 +17,7 @@ public static class ApplicationServiceCollectionExtensions
 
         services.AddValidatorsFromAssemblyContaining<IngestRequestValidator>();
         services.AddScoped<IRankingStrategy, HybridRankingStrategy>();
+        services.AddScoped<IHybridRankingService, HybridRankingService>();
 
         return services;
     }

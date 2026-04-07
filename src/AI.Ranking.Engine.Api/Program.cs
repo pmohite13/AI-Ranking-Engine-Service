@@ -1,11 +1,25 @@
 using AI.Ranking.Engine.Application.DependencyInjection;
 using AI.Ranking.Engine.Application.Options;
+using AI.Ranking.Engine.Domain;
 using AI.Ranking.Engine.Infrastructure.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<IngestOptions>(builder.Configuration.GetSection(IngestOptions.SectionName));
 builder.Services.Configure<RankingConstraintsOptions>(builder.Configuration.GetSection(RankingConstraintsOptions.SectionName));
+builder.Services.AddSingleton<IOptions<RankingWeights>>(_ =>
+{
+    var section = builder.Configuration.GetSection("RankingWeights");
+    var defaults = RankingWeights.Default;
+    var weights = new RankingWeights(
+        Semantic: section.GetValue<double?>("Semantic") ?? defaults.Semantic,
+        SkillOverlap: section.GetValue<double?>("SkillOverlap") ?? defaults.SkillOverlap,
+        ExperienceFit: section.GetValue<double?>("ExperienceFit") ?? defaults.ExperienceFit,
+        Keyword: section.GetValue<double?>("Keyword") ?? defaults.Keyword);
+    weights.EnsureValid();
+    return Options.Create(weights);
+});
 builder.Services.AddRankingEngineApplication();
 builder.Services.AddRankingEngineInfrastructure(builder.Configuration);
 
