@@ -1,5 +1,7 @@
 using AI.Ranking.Engine.Application.DependencyInjection;
 using AI.Ranking.Engine.Application.Options;
+using AI.Ranking.Engine.Api.Endpoints;
+using AI.Ranking.Engine.Api.Errors;
 using AI.Ranking.Engine.Domain;
 using AI.Ranking.Engine.Infrastructure.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -25,6 +27,8 @@ builder.Services.AddRankingEngineInfrastructure(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 var app = builder.Build();
 
@@ -34,12 +38,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseExceptionHandler();
 app.UseHttpsRedirection();
 
 app.MapGet("/health", () => Results.Ok(new HealthResponse(Status: "healthy")))
     .WithName("Health")
     .WithOpenApi()
     .WithTags("Health");
+
+app.MapDocumentIngestionAndRankingEndpoints();
 
 app.Run();
 

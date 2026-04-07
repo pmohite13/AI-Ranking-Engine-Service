@@ -5,6 +5,7 @@ using AI.Ranking.Engine.Infrastructure.Embeddings;
 using AI.Ranking.Engine.Infrastructure.Extraction;
 using AI.Ranking.Engine.Infrastructure.Http;
 using AI.Ranking.Engine.Infrastructure.Parsing;
+using AI.Ranking.Engine.Infrastructure.Storage;
 using AI.Ranking.Engine.Infrastructure.VectorRecall;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,6 +49,7 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddSingleton<IDocumentParserFactory, DocumentParserFactory>();
 
         services.AddSingleton<IVectorRecall, InMemoryVectorRecall>();
+        services.AddSingleton<IProfileCatalog, InMemoryProfileCatalog>();
 
         return services;
     }
