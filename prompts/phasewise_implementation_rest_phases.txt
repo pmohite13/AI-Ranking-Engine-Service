@@ -1,7 +1,7 @@
 I want you to please thoroughly read, study and analyse docs/IMPLEMENTATION-PLAN.md, docs/Known-Architectural-Decisions.md, docs/raw_requirement.txt and entire project so that you will get overall understanding about the project structure, requirement, dependencies and data/process flow.
 
 
-As per "docs/IMPLEMENTATION-PLAN.md" document we have implemented one phase so far "Phase 0 — Repository and governance (0.5–1 day)", including all or some modules/features/tasks/goals implementation mentioned in those respective phase/s. And now we need to start with next phase "Phase 1 — Domain and application contracts (0.5–1 day)". Lets begin with all modules/features/tasks/goals "1.", "2.", "3.", "4." as they are all inter-related.
+As per "docs/IMPLEMENTATION-PLAN.md" document we have implemented two phases so far "Phase 0 — Repository and governance (0.5–1 day)", "Phase 1 — Domain and application contracts (0.5–1 day)" including all or some modules/features/tasks/goals implementation mentioned in those respective phase/s. And now we need to start with next phase "Phase 2 — Document parsing (1 day)". Lets begin with all modules/features/tasks/goals "1.", "2.", "3.", "4.", "5." as they are all inter-related.
 
 
 Read, study and analyse "docs/IMPLEMENTATION-PLAN.md" document to get better context.

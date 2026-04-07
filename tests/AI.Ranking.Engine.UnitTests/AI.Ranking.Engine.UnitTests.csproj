@@ -15,6 +15,13 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\AI.Ranking.Engine.Application\AI.Ranking.Engine.Application.csproj" />
     <ProjectReference Include="..\..\src\AI.Ranking.Engine.Domain\AI.Ranking.Engine.Domain.csproj" />
+    <ProjectReference Include="..\..\src\AI.Ranking.Engine.Infrastructure\AI.Ranking.Engine.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Fixtures\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

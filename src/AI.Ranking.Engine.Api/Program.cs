@@ -1,11 +1,13 @@
 using AI.Ranking.Engine.Application.DependencyInjection;
 using AI.Ranking.Engine.Application.Options;
+using AI.Ranking.Engine.Infrastructure.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<IngestOptions>(builder.Configuration.GetSection(IngestOptions.SectionName));
 builder.Services.Configure<RankingConstraintsOptions>(builder.Configuration.GetSection(RankingConstraintsOptions.SectionName));
 builder.Services.AddRankingEngineApplication();
+builder.Services.AddRankingEngineInfrastructure();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
