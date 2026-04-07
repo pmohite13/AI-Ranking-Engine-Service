@@ -4,6 +4,7 @@ using AI.Ranking.Engine.Infrastructure.Caching;
 using AI.Ranking.Engine.Infrastructure.Embeddings;
 using AI.Ranking.Engine.Infrastructure.Extraction;
 using AI.Ranking.Engine.Infrastructure.Http;
+using AI.Ranking.Engine.Infrastructure.Ingestion;
 using AI.Ranking.Engine.Infrastructure.Parsing;
 using AI.Ranking.Engine.Infrastructure.Storage;
 using AI.Ranking.Engine.Infrastructure.VectorRecall;
@@ -27,6 +28,7 @@ public static class InfrastructureServiceCollectionExtensions
 
         services.Configure<EmbeddingOptions>(configuration.GetSection(EmbeddingOptions.SectionName));
         services.Configure<LlmExtractionOptions>(configuration.GetSection(LlmExtractionOptions.SectionName));
+        services.Configure<IngestionQueueOptions>(configuration.GetSection(IngestionQueueOptions.SectionName));
 
         services.AddMemoryCache();
         services.AddSingleton<ICacheService, MemoryCacheService>();
@@ -50,6 +52,11 @@ public static class InfrastructureServiceCollectionExtensions
 
         services.AddSingleton<IVectorRecall, InMemoryVectorRecall>();
         services.AddSingleton<IProfileCatalog, InMemoryProfileCatalog>();
+        services.AddSingleton<IIngestionIdempotencyStore, InMemoryIngestionIdempotencyStore>();
+        services.AddSingleton<ChannelIngestionQueue>();
+        services.AddSingleton<IIngestionQueue>(static sp => sp.GetRequiredService<ChannelIngestionQueue>());
+        services.AddSingleton<IIngestionQueueReader>(static sp => sp.GetRequiredService<ChannelIngestionQueue>());
+        services.AddHostedService<IngestionBackgroundWorker>();
 
         return services;
     }

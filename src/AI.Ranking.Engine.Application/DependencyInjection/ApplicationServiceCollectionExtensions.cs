@@ -1,4 +1,5 @@
 using AI.Ranking.Engine.Application.Abstractions;
+using AI.Ranking.Engine.Application.Ingestion;
 using AI.Ranking.Engine.Application.Ranking;
 using AI.Ranking.Engine.Application.Validation;
 using FluentValidation;
@@ -18,6 +19,7 @@ public static class ApplicationServiceCollectionExtensions
         services.AddValidatorsFromAssemblyContaining<IngestRequestValidator>();
         services.AddScoped<IRankingStrategy, HybridRankingStrategy>();
         services.AddScoped<IHybridRankingService, HybridRankingService>();
+        services.AddSingleton<IDocumentIngestionPipeline, DocumentIngestionPipeline>();
 
         return services;
     }

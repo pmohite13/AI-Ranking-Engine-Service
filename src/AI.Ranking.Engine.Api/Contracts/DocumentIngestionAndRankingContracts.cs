@@ -23,7 +23,9 @@ public sealed record IngestDocumentResponse(
     string FileName,
     string ContentType,
     int EmbeddingDimensions,
-    int SkillCount);
+    int SkillCount,
+    bool Deduplicated,
+    int QueueDepthAtEnqueue);
 
 public sealed record RankJobResponse(
     string JobId,

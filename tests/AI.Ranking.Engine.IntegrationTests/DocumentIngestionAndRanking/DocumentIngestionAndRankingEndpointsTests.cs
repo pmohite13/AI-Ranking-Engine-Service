@@ -34,6 +34,39 @@ public sealed class DocumentIngestionAndRankingEndpointsTests
 
         var response = await _client.PostAsync("/api/v1/documents/ingest", content);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var body = await response.Content.ReadFromJsonAsync<IngestDocumentResponse>();
+        Assert.NotNull(body);
+        Assert.False(body.Deduplicated);
+    }
+
+    [Fact]
+    public async Task Post_ingest_same_bytes_twice_second_is_deduplicated()
+    {
+        using var first = BuildMultipart(
+            entityId: "candidate-dedupe",
+            kind: IngestionEntityKind.Candidate,
+            fileName: "candidate.pdf",
+            text: "same payload");
+        using var second = BuildMultipart(
+            entityId: "candidate-dedupe",
+            kind: IngestionEntityKind.Candidate,
+            fileName: "candidate.pdf",
+            text: "same payload");
+
+        var firstResponse = await _client.PostAsync("/api/v1/documents/ingest", first);
+        var secondResponse = await _client.PostAsync("/api/v1/documents/ingest", second);
+
+        Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, secondResponse.StatusCode);
+
+        var firstBody = await firstResponse.Content.ReadFromJsonAsync<IngestDocumentResponse>();
+        var secondBody = await secondResponse.Content.ReadFromJsonAsync<IngestDocumentResponse>();
+
+        Assert.NotNull(firstBody);
+        Assert.NotNull(secondBody);
+        Assert.False(firstBody.Deduplicated);
+        Assert.True(secondBody.Deduplicated);
     }
 
     [Fact]

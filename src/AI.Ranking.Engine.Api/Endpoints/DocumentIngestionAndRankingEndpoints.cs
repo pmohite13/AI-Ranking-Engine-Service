@@ -1,12 +1,14 @@
+using System.Buffers;
 using AI.Ranking.Engine.Api.Contracts;
 using AI.Ranking.Engine.Application.Abstractions;
 using AI.Ranking.Engine.Application.Contracts;
 using AI.Ranking.Engine.Application.Options;
 using AI.Ranking.Engine.Domain;
-using AI.Ranking.Engine.Domain.Entities;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using ApiIngestionEntityKind = AI.Ranking.Engine.Api.Contracts.IngestionEntityKind;
+using AppIngestionEntityKind = AI.Ranking.Engine.Application.Contracts.IngestionEntityKind;
 
 namespace AI.Ranking.Engine.Api.Endpoints;
 
@@ -45,12 +47,8 @@ public static class DocumentIngestionAndRankingEndpoints
     private static async Task<IResult> IngestDocumentAsync(
         [FromForm] DocumentIngestForm form,
         IValidator<IngestRequest> ingestValidator,
-        IDocumentParserFactory parserFactory,
-        ILLMStructuredExtractor structuredExtractor,
-        IEmbeddingClient embeddingClient,
-        IVectorRecall vectorRecall,
-        IProfileCatalog catalog,
-        IOptions<EmbeddingOptions> embeddingOptions,
+        IOptions<IngestOptions> ingestOptions,
+        IIngestionQueue ingestionQueue,
         CancellationToken cancellationToken)
     {
         if (form.File is null)
@@ -72,60 +70,36 @@ public static class DocumentIngestionAndRankingEndpoints
         if (!validation.IsValid)
             return Results.ValidationProblem(ToValidationDictionary(validation));
 
-        await using var stream = form.File.OpenReadStream();
-        var parser = parserFactory.GetParser(contentType);
-        var parsed = await parser.ParseAsync(
-                stream,
-                new DocumentParseInput(form.File.FileName, contentType, form.File.Length),
+        var fileBytes = await ReadFileBytesAsync(form.File, ingestOptions.Value.MaxUploadBytes, cancellationToken).ConfigureAwait(false);
+        var queueResult = await ingestionQueue.EnqueueAsync(
+                new IngestionWorkItem(
+                    EntityId: form.EntityId.Trim(),
+                    EntityKind: ToApplicationEntityKind(form.EntityKind),
+                    FileName: form.File.FileName,
+                    ContentType: contentType,
+                    FileBytes: fileBytes),
                 cancellationToken)
             .ConfigureAwait(false);
 
-        var features = form.EntityKind == IngestionEntityKind.Candidate
-            ? await structuredExtractor.ExtractFromResumeAsync(parsed.NormalizedText, cancellationToken).ConfigureAwait(false)
-            : await structuredExtractor.ExtractFromJobAsync(parsed.NormalizedText, cancellationToken).ConfigureAwait(false);
-
-        var embeddingResult = await embeddingClient
-            .EmbedAsync(
-                new[] { parsed.NormalizedText },
-                new EmbeddingRequestOptions(
-                    embeddingOptions.Value.DefaultModelId,
-                    embeddingOptions.Value.DefaultDimensions),
-                cancellationToken)
-            .ConfigureAwait(false);
-
-        var embedding = embeddingResult[0].Values;
-
-        if (form.EntityKind == IngestionEntityKind.Candidate)
+        if (!queueResult.Accepted || queueResult.Completion is null)
         {
-            var candidate = new CandidateProfile
-            {
-                Id = form.EntityId.Trim(),
-                Features = features,
-            };
-
-            await catalog.UpsertCandidateAsync(candidate, cancellationToken).ConfigureAwait(false);
-            await vectorRecall.UpsertCandidateAsync(candidate.Id, embedding, cancellationToken).ConfigureAwait(false);
-        }
-        else
-        {
-            var job = new JobProfile
-            {
-                Id = form.EntityId.Trim(),
-                Features = features,
-                NormalizedDocumentText = parsed.NormalizedText,
-            };
-
-            await catalog.UpsertJobAsync(job, embedding, cancellationToken).ConfigureAwait(false);
+            return Results.Problem(
+                statusCode: StatusCodes.Status503ServiceUnavailable,
+                title: "Ingestion queue unavailable",
+                detail: queueResult.RejectionReason ?? "Unable to queue ingestion request.");
         }
 
+        var processed = await queueResult.Completion.ConfigureAwait(false);
         return Results.Ok(
             new IngestDocumentResponse(
-                EntityId: form.EntityId.Trim(),
-                EntityKind: form.EntityKind,
-                FileName: form.File.FileName,
-                ContentType: contentType.ToString(),
-                EmbeddingDimensions: embedding.Length,
-                SkillCount: features.Skills.Count));
+                EntityId: processed.EntityId,
+                EntityKind: ToApiEntityKind(processed.EntityKind),
+                FileName: processed.FileName,
+                ContentType: processed.ContentType,
+                EmbeddingDimensions: processed.EmbeddingDimensions,
+                SkillCount: processed.SkillCount,
+                Deduplicated: processed.Deduplicated,
+                QueueDepthAtEnqueue: queueResult.QueueDepth));
     }
 
     private static async Task<IResult> RankJobAsync(
@@ -218,4 +192,43 @@ public static class DocumentIngestionAndRankingEndpoints
 
         return errors.ToDictionary(static x => x.Key, static x => x.Value.ToArray(), StringComparer.OrdinalIgnoreCase);
     }
+
+    private static async Task<byte[]> ReadFileBytesAsync(IFormFile file, int maxUploadBytes, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(file);
+        await using var stream = file.OpenReadStream();
+        var initialCapacity = (int)Math.Min(Math.Min(file.Length, maxUploadBytes), int.MaxValue);
+        using var ms = new MemoryStream(initialCapacity > 0 ? initialCapacity : 0);
+        var buffer = ArrayPool<byte>.Shared.Rent(8192);
+        try
+        {
+            var remaining = (long)maxUploadBytes;
+            while (remaining > 0)
+            {
+                var toRead = (int)Math.Min(remaining, buffer.Length);
+                var read = await stream.ReadAsync(buffer.AsMemory(0, toRead), cancellationToken).ConfigureAwait(false);
+                if (read == 0)
+                    break;
+
+                await ms.WriteAsync(buffer.AsMemory(0, read), cancellationToken).ConfigureAwait(false);
+                remaining -= read;
+            }
+
+            return ms.ToArray();
+        }
+        finally
+        {
+            ArrayPool<byte>.Shared.Return(buffer);
+        }
+    }
+
+    private static AppIngestionEntityKind ToApplicationEntityKind(ApiIngestionEntityKind entityKind) =>
+        entityKind == ApiIngestionEntityKind.Candidate
+            ? AppIngestionEntityKind.Candidate
+            : AppIngestionEntityKind.Job;
+
+    private static ApiIngestionEntityKind ToApiEntityKind(AppIngestionEntityKind entityKind) =>
+        entityKind == AppIngestionEntityKind.Candidate
+            ? ApiIngestionEntityKind.Candidate
+            : ApiIngestionEntityKind.Job;
 }
